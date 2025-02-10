@@ -1,0 +1,16 @@
+html, body {
+    height: 100%;
+    width:100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+#pdfTask {
+    margin: 0.2em;
+    background-color: rgb(34, 107, 45);
+    color: rgb(0, 0, 0);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+}
