@@ -1,5 +1,5 @@
 "use client";
-import { useRef,useEffect, useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import axios from "axios";
 import styles from "../styles/Home.module.css";
 import "../styles/globals.css";
@@ -7,7 +7,7 @@ import "../styles/globals.css";
 export default function Home() {
   const [tasks, setTasks] = useState([]);
   const [task, setTask] = useState("");
-  const [file, setFile] = useState("");
+  const [file, setFile] = useState(null);
 
   useEffect(() => {
     fetchTasks();
@@ -53,16 +53,19 @@ export default function Home() {
   const fileInputRef = useRef(null);
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!file) return;
+
     const formData = new FormData();
     formData.append("file", file);
 
     try {
-      await axios.post("/api/upload-files", formData, {
+      const response = await axios.post("/api/upload-files", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+
       setFile(null);
       if (fileInputRef.current) {
-        fileInputRef.current.value = ""; 
+        fileInputRef.current.value = "";
       }
       fetchTasks();
     } catch (err) {
@@ -70,8 +73,13 @@ export default function Home() {
     }
   };
 
-  const showPdf = (pdf) => {
-    window.open(`/uploads/${pdf}`, "_blank");
+  const showPdf = (pdfUrl) => {
+    window.open(pdfUrl, "_blank", "noopener,noreferrer");
+    //   // Modify the URL to include "/fl_attachment/"
+    // const modifiedUrl = pdfUrl.replace("/upload/", "/upload/fl_attachment/");
+
+    // // Open the modified URL in a new tab
+    // window.open(modifiedUrl, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -115,7 +123,7 @@ export default function Home() {
               {task.task} &nbsp;
               {task.pdf && (
                 <button className={`${styles.button} ${task.done ? styles.done : ""}`} onClick={() => showPdf(task.pdf)}>
-                  {task.pdf}
+                  Show Task
                 </button>
               )}
               {!task.done && (
